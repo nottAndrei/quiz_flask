@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Home - Quiz IA</title>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+	<style>
+		:root {
+			--bg-gradient: linear-gradient(135deg, #0ea5e9, #6366f1, #f43f5e);
+			--card-bg: rgba(255, 255, 255, 0.88);
+			--text-primary: #0b1021;
+			--accent: #f43f5e;
+		}
+		html, body { height: 100%; }
+		body {
+			background: var(--bg-gradient);
+			color: var(--text-primary);
+			min-height: 100vh;
+			display: flex;
+			flex-direction: column;
+		}
+		.card {
+			background: var(--card-bg);
+			border: 1px solid rgba(255, 255, 255, 0.35);
+			box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+			backdrop-filter: blur(6px);
+		}
+		.btn-primary {
+			background: linear-gradient(120deg, #ff6b6b, #f43f5e);
+			border: none;
+			box-shadow: 0 8px 20px rgba(244, 63, 94, 0.35);
+		}
+		.btn-primary:hover { filter: brightness(1.05); }
+		.btn-outline-primary {
+			color: #0f172a;
+			border-color: #0ea5e9;
+		}
+		main { flex: 1; }
+	</style>
+</head>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+<body>
+
+{% set active_page = "home" %}
+{% include "_navbar.html" %}
+
+<main class="container py-5">
+	<div class="row justify-content-center">
+		<div class="col-lg-8">
+			<div class="card shadow-sm border-0">
+				<div class="card-body p-5 text-center">
+					<h1 class="mb-3">Benvenuto {{ session.get('nickname') or session.get('user') }},</h1>
+                    <h1 class="mb-3">Completa il Quiz sullo sviluppo dell' IA in Python</h1>
+					<p class="text-muted mb-4">Metti alla prova le tue conoscenze su machine learning, deep learning e librerie Python.</p>
+					<div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+						<a class="btn btn-primary btn-lg" href="/">Inizia il quiz</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="row justify-content-center mt-4">
+		<div class="col-lg-8">
+			<div class="card shadow-sm border-0">
+				<div class="card-body p-4">
+					<h2 class="h4 mb-3 text-center">Previsioni meteo (3 giorni)</h2>
+					<form method="POST" action="/home" class="row g-3 align-items-end mb-3">
+						<div class="col-sm-8">
+							<label for="city" class="form-label">Inserisci la città</label>
+							<input type="text" class="form-control" id="city" name="city" value="{{ city_input or '' }}" placeholder="Es. Roma" required>
+						</div>
+						<div class="col-sm-4">
+							<button type="submit" class="btn btn-outline-primary w-100">Mostra meteo</button>
+						</div>
+					</form>
+
+					{% if weather_error %}
+					<div class="alert alert-danger" role="alert">{{ weather_error }}</div>
+					{% endif %}
+
+					{% if weather_data %}
+					<div class="mb-2 text-muted">Località: {{ location_label }}</div>
+					<div class="table-responsive">
+						<table class="table table-sm align-middle mb-0">
+							<thead>
+								<tr>
+									<th>Giorno</th>
+									<th>Data</th>
+									<th>Temperatura diurna (°C)</th>
+									<th>Temperatura notturna (°C)</th>
+								</tr>
+							</thead>
+							<tbody>
+							{% for row in weather_data %}
+								<tr>
+									<td>{{ row.day }}</td>
+									<td>{{ row.date }}</td>
+									<td>{{ row.temp_day }}</td>
+									<td>{{ row.temp_night }}</td>
+								</tr>
+							{% endfor %}
+							</tbody>
+						</table>
+					</div>
+					{% endif %}
+				</div>
+			</div>
+		</div>
+	</div>
+</main>
+
+{% include "_footer.html" %}
+
+</body>
+</html>

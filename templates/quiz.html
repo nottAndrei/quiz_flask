@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Quiz</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous"><style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #0ea5e9, #6366f1, #f43f5e);
+            --card-bg: rgba(255, 255, 255, 0.92);
+            --accent: #f43f5e;
+            --accent-2: #0ea5e9;
+        }
+        html, body { height: 100%; }
+        body {
+            background: var(--bg-gradient);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .quiz-card {
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 14px 34px rgba(0, 0, 0, 0.16);
+            background: var(--card-bg);
+            backdrop-filter: blur(8px);
+            border-radius: 18px;
+        }
+        .quiz-card .card-title {
+            color: #0f172a;
+            font-weight: 700;
+        }
+        .form-check-label { color: #0f172a; }
+        .btn-primary {
+            background: linear-gradient(120deg, #ff6b6b, #f43f5e);
+            border: none;
+            box-shadow: 0 10px 24px rgba(244, 63, 94, 0.35);
+        }
+        .nav-btn {
+            border: none;
+            color: #0f172a;
+            font-weight: 700;
+            padding: 0.65rem 1.15rem;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18);
+            transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+        }
+        .nav-btn:hover { transform: translateY(-1px); filter: brightness(1.03); }
+        .nav-btn:disabled { opacity: 0.55; box-shadow: none; }
+        #nextBtn { background: linear-gradient(120deg, #38bdf8, #6366f1); color: #fff; }
+        #prevBtn { background: linear-gradient(120deg, #cbd5e1, #94a3b8); color: #0f172a; }
+        @media (max-width: 576px) {
+            .nav-btn { width: 100%; }
+        }
+    </style>
+</head>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+<body>
+
+{% set active_page = "quiz" %}
+{% include "_navbar.html" %}
+
+<main class="container py-4">
+    <h1 class="mb-4">Quiz di Intelligenza Artificiale</h1>
+    <form method="POST" action="/risultato" class="d-grid gap-4">
+        {% for domanda in domande %}
+            {% set name = "risposta_" ~ loop.index0 %}
+            <div class="card quiz-card question-card {% if not loop.first %}d-none{% endif %}" data-index="{{ loop.index0 }}">
+                <div class="card-body">
+                    <h5 class="card-title">{{ domanda.domanda }}</h5>
+                    <div class="mt-3">
+                        {% for opzione in domanda.opzioni %}
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="{{ name }}" value="{{ opzione }}" id="{{ name }}_{{ loop.index }}" {% if loop.first %}data-required="true"{% endif %}>
+                            <label class="form-check-label" for="{{ name }}_{{ loop.index }}">{{ opzione }}</label>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+        <div class="d-flex flex-wrap align-items-center gap-2">
+            <button type="button" class="nav-btn" id="prevBtn">Precedente</button>
+            <button type="button" class="nav-btn" id="nextBtn">Successiva</button>
+            <button type="submit" class="btn btn-primary" id="submitBtn">Invia tutte le risposte</button>
+        </div>
+    </form>
+</main>
+{% include "_footer.html" %}
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const cards = Array.from(document.querySelectorAll('.question-card'));
+    if (!cards.length) return;
+
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const submitBtn = document.getElementById('submitBtn');
+
+    let current = 0;
+
+    const updateView = () => {
+        cards.forEach((card, idx) => {
+            const show = idx === current;
+            card.classList.toggle('d-none', !show);
+            const inputs = card.querySelectorAll('input');
+            inputs.forEach(input => {
+                const shouldRequire = show && input.dataset.required === 'true';
+                input.required = shouldRequire;
+            });
+        });
+
+        prevBtn.disabled = current === 0;
+        nextBtn.classList.toggle('d-none', current === cards.length - 1);
+        submitBtn.classList.toggle('d-none', current !== cards.length - 1);
+    };
+
+    prevBtn.addEventListener('click', () => {
+        if (current > 0) {
+            current -= 1;
+            updateView();
+        }
+    });
+
+    nextBtn.addEventListener('click', () => {
+        if (current < cards.length - 1) {
+            current += 1;
+            updateView();
+        }
+    });
+
+    updateView();
+});
+</script>
+
+</body>
+</html>

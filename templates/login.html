@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Login - Quiz IA</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #0ea5e9, #6366f1, #f43f5e);
+            --card-bg: rgba(255, 255, 255, 0.9);
+        }
+        html, body { height: 100%; }
+        body {
+            background: var(--bg-gradient);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .card {
+            background: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.45);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+            backdrop-filter: blur(6px);
+        }
+        .btn-primary {
+            background: linear-gradient(120deg, #ff6b6b, #f43f5e);
+            border: none;
+        }
+        main { flex: 1; }
+    </style>
+</head>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+<body>
+
+{% set active_page = "login" %}
+{% include "_navbar.html" %}
+
+<main class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-5 col-md-7">
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-4">
+                    <h2 class="mb-3 text-center">Accedi</h2>
+                    {% if error %}
+                    <div class="alert alert-danger" role="alert">{{ error }}</div>
+                    {% endif %}
+                    <form method="POST" action="{{ url_for('login') }}" class="d-grid gap-3">
+                        <div>
+                            <label class="form-label" for="username">Username</label>
+                            <input class="form-control" type="text" id="username" name="username" required autofocus>
+                        </div>
+                        <div>
+                            <label class="form-label" for="password">Password</label>
+                            <input class="form-control" type="password" id="password" name="password" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Entra</button>
+                        <p class="mb-0 text-center text-muted">Non hai un account? <a href="{{ url_for('register') }}">Registrati</a></p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+{% include "_footer.html" %}
+
+</body>
+</html>

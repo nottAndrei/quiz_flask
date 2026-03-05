@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Risultato</title>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous"><style>
+		:root {
+			--bg-gradient: linear-gradient(135deg, #0ea5e9, #6366f1, #f43f5e);
+			--card-bg: rgba(255, 255, 255, 0.9);
+			--accent: #f43f5e;
+		}
+		html, body { height: 100%; }
+		body {
+			background: var(--bg-gradient);
+			min-height: 100vh;
+			display: flex;
+			flex-direction: column;
+		}
+		.quiz-card {
+			border: 1px solid rgba(255, 255, 255, 0.45);
+			box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+			background: var(--card-bg);
+			backdrop-filter: blur(6px);
+		}
+		.btn-outline-primary { border-width: 2px; border-color: #0ea5e9; color: #0f172a; }
+		main { flex: 1; }
+	</style>
+</head>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+<body>
+
+{% set active_page = "risultato" %}
+{% include "_navbar.html" %}
+
+<main class="container py-4">
+	<div class="card quiz-card mb-4">
+		<div class="card-body text-center">
+			<h1 class="mb-3">{{ messaggio }}</h1>
+			<a class="btn btn-outline-primary" href="/">Riprova</a>
+		</div>
+	</div>
+
+	{% if errate %}
+	<div class="card quiz-card">
+		<div class="card-body">
+			<h4 class="card-title mb-3">Risposte sbagliate</h4>
+			<div class="list-group list-group-flush">
+				{% for item in errate %}
+				<div class="list-group-item">
+					<p class="mb-1 fw-semibold">{{ item.domanda }}</p>
+					<p class="mb-1 text-danger">Tua risposta: {{ item.utente }}</p>
+					<p class="mb-0 text-success">Risposta corretta: {{ item.corretta }}</p>
+				</div>
+				{% endfor %}
+			</div>
+		</div>
+	</div>
+	{% else %}
+	<div class="alert alert-success" role="alert">
+		Ottimo! Tutte le risposte sono corrette.
+	</div>
+	{% endif %}
+
+	{% if leaderboard %}
+	<div class="card quiz-card mt-4">
+		<div class="card-body">
+			<h4 class="card-title mb-3">Leaderboard</h4>
+			<div class="table-responsive">
+				<table class="table table-sm align-middle mb-0">
+					<thead>
+						<tr>
+							<th scope="col">Pos</th>
+							<th scope="col">Utente</th>
+							<th scope="col">Corrette</th>
+							<th scope="col">Totale</th>
+							<th scope="col">Data</th>
+						</tr>
+					</thead>
+					<tbody>
+					{% for row in leaderboard %}
+						<tr>
+							<th scope="row">{{ loop.index }}</th>
+							<td>{{ row.nickname }}</td>
+							<td class="text-success fw-semibold">{{ row.corrette }}</td>
+							<td>{{ row.totale }}</td>
+							<td class="text-muted">{{ row.created_at }}</td>
+						</tr>
+					{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+	{% endif %}
+</main>
+
+{% include "_footer.html" %}
+
+</body>
+</html>
